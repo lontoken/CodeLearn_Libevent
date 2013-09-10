@@ -1,5 +1,5 @@
 # WATCH OUT!  This makefile is a work in progress.  It is probably missing
-# tons of important things.  DO NOT RELY ON IT TO BUILD A GOOD LIBEVENT.
+# tons of important things.  DO NOT RELY依靠 ON IT TO BUILD A GOOD LIBEVENT.
 
 # Needed for correctness
 CFLAGS=/IWIN32-Code /Iinclude /Icompat /DWIN32 /DHAVE_CONFIG_H /I.
