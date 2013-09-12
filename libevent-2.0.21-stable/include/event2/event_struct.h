@@ -30,10 +30,10 @@
 /** @file event2/event_struct.h
 
   Structures used by event.h.  Using these structures directly WILL harm
-  forward compatibility: be careful.
+  forward compatibility兼容性: be careful.
 
-  No field declared in this file should be used directly in user code.  Except
-  for historical reasons, these fields would not be exposed at all.
+  No field declared已声明的 in this file should be used directly in user code.  Except
+  for historical历史性的 reasons, these fields would not be exposed暴露的 at all.
  */
 
 #ifdef __cplusplus

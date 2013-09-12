@@ -32,22 +32,22 @@
 
   @section intro Introduction
 
-  Libevent is an event notification library for developing scalable network
-  servers.  The Libevent API provides a mechanism to execute a callback
+  Libevent is an event notification library for developing scalable可扩展 network
+  servers.  The Libevent API provides a mechanism机制 to execute a callback
   function when a specific event occurs on a file descriptor or after a
   timeout has been reached. Furthermore, Libevent also support callbacks due
-  to signals or regular timeouts.
+  to signals or regular定期的 timeouts.
 
-  Libevent is meant to replace the event loop found in event driven network
+  Libevent is meant to打算 replace the event loop found in event driven network
   servers. An application just needs to call event_dispatch() and then add or
   remove events dynamically without having to change the event loop.
 
 
   Currently, Libevent supports /dev/poll, kqueue(2), select(2), poll(2),
   epoll(4), and evports. The internal event mechanism is completely
-  independent of the exposed event API, and a simple update of Libevent can
+  independent of the exposed暴露的 event API, and a simple update of Libevent can
   provide new functionality without having to redesign the applications. As a
-  result, Libevent allows for portable application development and provides
+  result, Libevent allows for portable可移植的 application development and provides
   the most scalable event notification mechanism available on an operating
   system.  Libevent can also be used for multithreaded programs.  Libevent
   should compile on Linux, *BSD, Mac OS X, Solaris and, Windows.
@@ -78,7 +78,7 @@
   or event_base_new_with_config().  The event_base is responsible for
   keeping track of which events are "pending" (that is to say, being
   watched to see if they become active) and which events are "active".
-  Every event is associated with a single event_base.
+  Every event is associated关联的 with a single event_base.
 
   @section event Event notification
 
@@ -93,7 +93,7 @@
   @section loop Dispaching evets.
 
   Finally, you call event_base_dispatch() to loop and dispatch events.
-  You can also use event_base_loop() for more fine-grained control.
+  You can also use event_base_loop() for more fine-grained细粒的 control.
 
   Currently, only one thread can be dispatching a given event_base at a
   time.  If you want to run events in multiple threads at once, you can
@@ -102,15 +102,15 @@
 
   @section bufferevent I/O Buffers
 
-  Libevent provides a buffered I/O abstraction on top of the regular event
+  Libevent provides a buffered I/O abstraction抽象 on top of the regular event
   callbacks. This abstraction is called a bufferevent. A bufferevent
-  provides input and output buffers that get filled and drained
+  provides input and output buffers that get filled装满 and drained排水
   automatically. The user of a buffered event no longer deals directly
   with the I/O, but instead is reading from input and writing to output
   buffers.
 
   Once initialized via bufferevent_socket_new(), the bufferevent structure
-  can be used repeatedly with bufferevent_enable() and
+  can be used repeatedly反复地 with bufferevent_enable() and
   bufferevent_disable().  Instead of reading and writing directly to a
   socket, you would call bufferevent_read() and bufferevent_write().
 
@@ -126,7 +126,7 @@
   Libevent can also be used to create timers that invoke a callback after a
   certain amount of time has expired. The evtimer_new() function returns
   an event struct to use as a timer. To activate the timer, call
-  evtimer_add(). Timers can be deactivated by calling evtimer_del().
+  evtimer_add(). Timers can be deactivated暂停 by calling evtimer_del().
 
   @section evdns Asynchronous DNS resolution
 
@@ -137,15 +137,15 @@
   @section evhttp Event-driven HTTP servers
 
   Libevent provides a very simple event-driven HTTP server that can be
-  embedded in your program and used to service HTTP requests.
+  embedded嵌入 in your program and used to service HTTP requests.
 
-  To use this capability, you need to include the <event2/http.h> header in your
+  To use this capability功能, you need to include the <event2/http.h> header in your
   program.  See that header for more information.
 
   @section evrpc A framework for RPC servers and clients
 
   Libevent provides a framework for creating RPC servers and clients.  It
-  takes care of marshaling and unmarshaling all data structures.
+  takes care of marshaling调度 and unmarshaling all data structures.
 
   @section api API Reference
 
@@ -204,7 +204,7 @@ extern "C" {
  * have one.  It keeps track of all pending and active events, and
  * notifies your application of the active ones.
  *
- * This is an opaque structure; you can allocate one using
+ * This is an opaque不透明的 structure; you can allocate one using
  * event_base_new() or event_base_new_with_config().
  *
  * @see event_base_new(), event_base_free(), event_base_loop(),
