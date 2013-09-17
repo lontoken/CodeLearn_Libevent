@@ -31,7 +31,7 @@ void generic_handler(struct evhttp_request *req, void *arg)
     evhttp_send_reply(req, HTTP_OK, "OK", buf);
 }
 
-int main(int argc, wchar_t* argv[])
+int ___main(int argc, wchar_t* argv[])
 {
     struct evhttp *httpd;
 
