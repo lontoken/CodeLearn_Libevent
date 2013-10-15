@@ -49,7 +49,7 @@ extern "C" {
 
 #ifndef _EVENT_HAVE_STRUCT_IN6_ADDR
 struct in6_addr {
-	ev_uint8_t s6_addr[16];
+    ev_uint8_t s6_addr[16];
 };
 #endif
 
@@ -59,11 +59,11 @@ typedef int sa_family_t;
 
 #ifndef _EVENT_HAVE_STRUCT_SOCKADDR_IN6
 struct sockaddr_in6 {
-	/* This will fail if we find a struct sockaddr that doesn't have
-	 * sa_family as the first element. */
-	sa_family_t sin6_family;
-	ev_uint16_t sin6_port;
-	struct in6_addr sin6_addr;
+    /* This will fail if we find a struct sockaddr that doesn't have
+     * sa_family as the first element. */
+    sa_family_t sin6_family;
+    ev_uint16_t sin6_port;
+    struct in6_addr sin6_addr;
 };
 #endif
 

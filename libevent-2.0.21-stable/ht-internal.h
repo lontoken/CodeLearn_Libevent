@@ -99,23 +99,23 @@ ht_string_hash(const char *s)
 
 #ifdef HT_CACHE_HASH_VALUES
 #define _HT_SET_HASH(elm, field, hashfn)        \
-	do { (elm)->field.hte_hash = hashfn(elm); } while (0)
-#define _HT_SET_HASHVAL(elm, field, val)	\
-	do { (elm)->field.hte_hash = (val); } while (0)
-#define _HT_ELT_HASH(elm, field, hashfn)	\
-	((elm)->field.hte_hash)
+    do { (elm)->field.hte_hash = hashfn(elm); } while (0)
+#define _HT_SET_HASHVAL(elm, field, val)    \
+    do { (elm)->field.hte_hash = (val); } while (0)
+#define _HT_ELT_HASH(elm, field, hashfn)    \
+    ((elm)->field.hte_hash)
 #else
-#define _HT_SET_HASH(elm, field, hashfn)	\
-	((void)0)
-#define _HT_ELT_HASH(elm, field, hashfn)	\
-	(hashfn(elm))
-#define _HT_SET_HASHVAL(elm, field, val)	\
+#define _HT_SET_HASH(elm, field, hashfn)    \
+    ((void)0)
+#define _HT_ELT_HASH(elm, field, hashfn)    \
+    (hashfn(elm))
+#define _HT_SET_HASHVAL(elm, field, val)    \
         ((void)0)
 #endif
 
 /* Helper: alias for the bucket containing 'elm'. */
-#define _HT_BUCKET(head, field, elm, hashfn)				\
-	((head)->hth_table[_HT_ELT_HASH(elm,field,hashfn) % head->hth_table_length])
+#define _HT_BUCKET(head, field, elm, hashfn)                \
+    ((head)->hth_table[_HT_ELT_HASH(elm,field,hashfn) % head->hth_table_length])
 
 #define HT_FOREACH(x, name, head)                 \
   for ((x) = HT_START(name, head);                \
@@ -142,7 +142,7 @@ ht_string_hash(const char *s)
     struct type **p;                                                    \
     if (!head->hth_table)                                               \
       return NULL;                                                      \
-    p = &_HT_BUCKET(head, field, elm, hashfn);				\
+    p = &_HT_BUCKET(head, field, elm, hashfn);                \
     while (*p) {                                                        \
       if (eqfn(*p, elm))                                                \
         return p;                                                       \
@@ -171,7 +171,7 @@ ht_string_hash(const char *s)
       name##_HT_GROW(head, head->hth_n_entries+1);                      \
     ++head->hth_n_entries;                                              \
     _HT_SET_HASH(elm, field, hashfn);                                   \
-    p = &_HT_BUCKET(head, field, elm, hashfn);				\
+    p = &_HT_BUCKET(head, field, elm, hashfn);                \
     elm->field.hte_next = *p;                                           \
     *p = elm;                                                           \
   }                                                                     \
@@ -277,7 +277,7 @@ ht_string_hash(const char *s)
   static inline struct type **                                          \
   name##_HT_NEXT_RMV(struct name *head, struct type **elm)              \
   {                                                                     \
-    unsigned h = _HT_ELT_HASH(*elm, field, hashfn);		        \
+    unsigned h = _HT_ELT_HASH(*elm, field, hashfn);                \
     *elm = (*elm)->field.hte_next;                                      \
     --head->hth_n_entries;                                              \
     if (*elm) {                                                         \
@@ -404,7 +404,7 @@ ht_string_hash(const char *s)
       return 5;                                                         \
     for (n = i = 0; i < head->hth_table_length; ++i) {                  \
       for (elm = head->hth_table[i]; elm; elm = elm->field.hte_next) {  \
-        if (_HT_ELT_HASH(elm, field, hashfn) != hashfn(elm))	        \
+        if (_HT_ELT_HASH(elm, field, hashfn) != hashfn(elm))            \
           return 1000 + i;                                              \
         if ((_HT_ELT_HASH(elm, field, hashfn) % head->hth_table_length) != i) \
           return 10000 + i;                                             \
@@ -422,7 +422,7 @@ ht_string_hash(const char *s)
 #define _HT_FIND_OR_INSERT(name, field, hashfn, head, eltype, elm, var, y, n) \
   {                                                                     \
     struct name *_##var##_head = head;                                  \
-    struct eltype **var;												\
+    struct eltype **var;                                                \
     if (!_##var##_head->hth_table ||                                    \
         _##var##_head->hth_n_entries >= _##var##_head->hth_load_limit)  \
       name##_HT_GROW(_##var##_head, _##var##_head->hth_n_entries+1);     \

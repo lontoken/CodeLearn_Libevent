@@ -49,8 +49,8 @@ typedef void (*iocp_callback)(struct event_overlapped *, ev_uintptr_t, ev_ssize_
    number of bytes transferred as arguments.
  */
 struct event_overlapped {
-	OVERLAPPED overlapped;
-	iocp_callback cb;
+    OVERLAPPED overlapped;
+    iocp_callback cb;
 };
 
 /* Mingw's headers don't define LPFN_ACCEPTEX. */
@@ -63,9 +63,9 @@ typedef void (WINAPI *GetAcceptExSockaddrsPtr)(PVOID, DWORD, DWORD, DWORD, LPSOC
     Windows provide.
  */
 struct win32_extension_fns {
-	AcceptExPtr AcceptEx;
-	ConnectExPtr ConnectEx;
-	GetAcceptExSockaddrsPtr GetAcceptExSockaddrs;
+    AcceptExPtr AcceptEx;
+    ConnectExPtr ConnectEx;
+    GetAcceptExSockaddrsPtr GetAcceptExSockaddrs;
 };
 
 /**
@@ -73,30 +73,30 @@ struct win32_extension_fns {
     related data.
  */
 struct event_iocp_port {
-	/** The port itself */
-	HANDLE port;
-	/* A lock to cover internal structures. */
-	CRITICAL_SECTION lock;
-	/** Number of threads ever open on the port. */
-	short n_threads;
-	/** True iff we're shutting down all the threads on this port */
-	short shutdown;
-	/** How often the threads on this port check for shutdown and other
-	 * conditions */
-	long ms;
-	/* The threads that are waiting for events. */
-	HANDLE *threads;
-	/** Number of threads currently open on this port. */
-	short n_live_threads;
-	/** A semaphore to signal when we are done shutting down. */
-	HANDLE *shutdownSemaphore;
+    /** The port itself */
+    HANDLE port;
+    /* A lock to cover internal structures. */
+    CRITICAL_SECTION lock;
+    /** Number of threads ever open on the port. */
+    short n_threads;
+    /** True iff we're shutting down all the threads on this port */
+    short shutdown;
+    /** How often the threads on this port check for shutdown and other
+     * conditions */
+    long ms;
+    /* The threads that are waiting for events. */
+    HANDLE *threads;
+    /** Number of threads currently open on this port. */
+    short n_live_threads;
+    /** A semaphore to signal when we are done shutting down. */
+    HANDLE *shutdownSemaphore;
 };
 
 const struct win32_extension_fns *event_get_win32_extension_fns(void);
 #else
 /* Dummy definition so we can test-compile more things on unix. */
 struct event_overlapped {
-	iocp_callback cb;
+    iocp_callback cb;
 };
 #endif
 
@@ -104,7 +104,7 @@ struct event_overlapped {
 
     @param overlapped The struct event_overlapped to initialize
     @param cb The callback that should be invoked once the IO operation has
-	finished.
+    finished.
  */
 void event_overlapped_init(struct event_overlapped *, iocp_callback cb);
 
@@ -192,7 +192,7 @@ struct bufferevent *bufferevent_async_new(struct event_base *base,
 void bufferevent_async_set_connected(struct bufferevent *bev);
 int bufferevent_async_can_connect(struct bufferevent *bev);
 int bufferevent_async_connect(struct bufferevent *bev, evutil_socket_t fd,
-	const struct sockaddr *sa, int socklen);
+    const struct sockaddr *sa, int socklen);
 
 #ifdef __cplusplus
 }

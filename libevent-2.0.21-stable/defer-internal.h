@@ -40,31 +40,31 @@ typedef void (*deferred_cb_fn)(struct deferred_cb *, void *);
 /** A deferred_cb is a callback that can be scheduled to run as part of
  * an event_base's event_loop, rather than running immediately. */
 struct deferred_cb {
-	/** Links to the adjacent active (pending) deferred_cb objects. */
-	TAILQ_ENTRY (deferred_cb) cb_next;
-	/** True iff this deferred_cb is pending in an event_base. */
-	unsigned queued : 1;
-	/** The function to execute when the callback runs. */
-	deferred_cb_fn cb;
-	/** The function's second argument. */
-	void *arg;
+    /** Links to the adjacent active (pending) deferred_cb objects. */
+    TAILQ_ENTRY (deferred_cb) cb_next;
+    /** True iff this deferred_cb is pending in an event_base. */
+    unsigned queued : 1;
+    /** The function to execute when the callback runs. */
+    deferred_cb_fn cb;
+    /** The function's second argument. */
+    void *arg;
 };
 
 /** A deferred_cb_queue is a list of deferred_cb that we can add to and run. */
 struct deferred_cb_queue {
-	/** Lock used to protect the queue. */
-	void *lock;
+    /** Lock used to protect the queue. */
+    void *lock;
 
-	/** How many entries are in the queue? */
-	int active_count;
+    /** How many entries are in the queue? */
+    int active_count;
 
-	/** Function called when adding to the queue from another thread. */
-	void (*notify_fn)(struct deferred_cb_queue *, void *);
-	void *notify_arg;
+    /** Function called when adding to the queue from another thread. */
+    void (*notify_fn)(struct deferred_cb_queue *, void *);
+    void *notify_arg;
 
-	/** Deferred callback management: a list of deferred callbacks to
-	 * run active the active events. */
-	TAILQ_HEAD (deferred_cb_list, deferred_cb) deferred_cb_list;
+    /** Deferred callback management: a list of deferred callbacks to
+     * run active the active events. */
+    TAILQ_HEAD (deferred_cb_list, deferred_cb) deferred_cb_list;
 };
 
 /**
@@ -84,10 +84,10 @@ void event_deferred_cb_cancel(struct deferred_cb_queue *, struct deferred_cb *);
  */
 void event_deferred_cb_schedule(struct deferred_cb_queue *, struct deferred_cb *);
 
-#define LOCK_DEFERRED_QUEUE(q)						\
-	EVLOCK_LOCK((q)->lock, 0)
-#define UNLOCK_DEFERRED_QUEUE(q)					\
-	EVLOCK_UNLOCK((q)->lock, 0)
+#define LOCK_DEFERRED_QUEUE(q)                        \
+    EVLOCK_LOCK((q)->lock, 0)
+#define UNLOCK_DEFERRED_QUEUE(q)                    \
+    EVLOCK_UNLOCK((q)->lock, 0)
 
 #ifdef __cplusplus
 }

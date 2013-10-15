@@ -35,14 +35,14 @@ struct evrpc_request_wrapper;
 #define EVRPC_URI_PREFIX "/.rpc."
 
 struct evrpc_hook {
-	TAILQ_ENTRY(evrpc_hook) next;
+    TAILQ_ENTRY(evrpc_hook) next;
 
-	/* returns EVRPC_TERMINATE; if the rpc should be aborted.
-	 * a hook is is allowed to rewrite the evbuffer
-	 */
-	int (*process)(void *, struct evhttp_request *,
-	    struct evbuffer *, void *);
-	void *process_arg;
+    /* returns EVRPC_TERMINATE; if the rpc should be aborted.
+     * a hook is is allowed to rewrite the evbuffer
+     */
+    int (*process)(void *, struct evhttp_request *,
+        struct evbuffer *, void *);
+    void *process_arg;
 };
 
 TAILQ_HEAD(evrpc_hook_list, evrpc_hook);
@@ -57,11 +57,11 @@ struct evrpc_hook_ctx;
 TAILQ_HEAD(evrpc_pause_list, evrpc_hook_ctx);
 
 struct _evrpc_hooks {
-	/* hooks for processing outbound and inbound rpcs */
-	struct evrpc_hook_list in_hooks;
-	struct evrpc_hook_list out_hooks;
+    /* hooks for processing outbound and inbound rpcs */
+    struct evrpc_hook_list in_hooks;
+    struct evrpc_hook_list out_hooks;
 
-	struct evrpc_pause_list pause_requests;
+    struct evrpc_pause_list pause_requests;
 };
 
 #define input_hooks common.in_hooks
@@ -69,13 +69,13 @@ struct _evrpc_hooks {
 #define paused_requests common.pause_requests
 
 struct evrpc_base {
-	struct _evrpc_hooks common;
+    struct _evrpc_hooks common;
 
-	/* the HTTP server under which we register our RPC calls */
-	struct evhttp* http_server;
+    /* the HTTP server under which we register our RPC calls */
+    struct evhttp* http_server;
 
-	/* a list of all RPCs registered with us */
-	TAILQ_HEAD(evrpc_list, evrpc) registered_rpcs;
+    /* a list of all RPCs registered with us */
+    TAILQ_HEAD(evrpc_list, evrpc) registered_rpcs;
 };
 
 struct evrpc_req_generic;
@@ -83,37 +83,37 @@ void evrpc_reqstate_free(struct evrpc_req_generic* rpc_state);
 
 /* A pool for holding evhttp_connection objects */
 struct evrpc_pool {
-	struct _evrpc_hooks common;
+    struct _evrpc_hooks common;
 
-	struct event_base *base;
+    struct event_base *base;
 
-	struct evconq connections;
+    struct evconq connections;
 
-	int timeout;
+    int timeout;
 
-	TAILQ_HEAD(evrpc_requestq, evrpc_request_wrapper) (requests);
+    TAILQ_HEAD(evrpc_requestq, evrpc_request_wrapper) (requests);
 };
 
 struct evrpc_hook_ctx {
-	TAILQ_ENTRY(evrpc_hook_ctx) next;
+    TAILQ_ENTRY(evrpc_hook_ctx) next;
 
-	void *ctx;
-	void (*cb)(void *, enum EVRPC_HOOK_RESULT);
+    void *ctx;
+    void (*cb)(void *, enum EVRPC_HOOK_RESULT);
 };
 
 struct evrpc_meta {
-	TAILQ_ENTRY(evrpc_meta) next;
-	char *key;
+    TAILQ_ENTRY(evrpc_meta) next;
+    char *key;
 
-	void *data;
-	size_t data_size;
+    void *data;
+    size_t data_size;
 };
 
 TAILQ_HEAD(evrpc_meta_list, evrpc_meta);
 
 struct evrpc_hook_meta {
-	struct evrpc_meta_list meta_data;
-	struct evhttp_connection *evcon;
+    struct evrpc_meta_list meta_data;
+    struct evhttp_connection *evcon;
 };
 
 /* allows association of meta data with a request */
@@ -130,75 +130,75 @@ static void evrpc_hook_context_free(struct evrpc_hook_meta *ctx);
 
 /* We alias the RPC specific structs to this voided one */
 struct evrpc_req_generic {
-	/*
-	 * allows association of meta data via hooks - needs to be
-	 * synchronized with evrpc_request_wrapper
-	 */
-	struct evrpc_hook_meta *hook_meta;
+    /*
+     * allows association of meta data via hooks - needs to be
+     * synchronized with evrpc_request_wrapper
+     */
+    struct evrpc_hook_meta *hook_meta;
 
-	/* the unmarshaled request object */
-	void *request;
+    /* the unmarshaled request object */
+    void *request;
 
-	/* the empty reply object that needs to be filled in */
-	void *reply;
+    /* the empty reply object that needs to be filled in */
+    void *reply;
 
-	/*
-	 * the static structure for this rpc; that can be used to
-	 * automatically unmarshal and marshal the http buffers.
-	 */
-	struct evrpc *rpc;
+    /*
+     * the static structure for this rpc; that can be used to
+     * automatically unmarshal and marshal the http buffers.
+     */
+    struct evrpc *rpc;
 
-	/*
-	 * the http request structure on which we need to answer.
-	 */
-	struct evhttp_request* http_req;
+    /*
+     * the http request structure on which we need to answer.
+     */
+    struct evhttp_request* http_req;
 
-	/*
-	 * Temporary data store for marshaled data
-	 */
-	struct evbuffer* rpc_data;
+    /*
+     * Temporary data store for marshaled data
+     */
+    struct evbuffer* rpc_data;
 };
 
 /* the client side of an rpc request */
 struct evrpc_request_wrapper {
-	/*
-	 * allows association of meta data via hooks - needs to be
-	 * synchronized with evrpc_req_generic.
-	 */
-	struct evrpc_hook_meta *hook_meta;
+    /*
+     * allows association of meta data via hooks - needs to be
+     * synchronized with evrpc_req_generic.
+     */
+    struct evrpc_hook_meta *hook_meta;
 
-	TAILQ_ENTRY(evrpc_request_wrapper) next;
+    TAILQ_ENTRY(evrpc_request_wrapper) next;
 
-	/* pool on which this rpc request is being made */
-	struct evrpc_pool *pool;
+    /* pool on which this rpc request is being made */
+    struct evrpc_pool *pool;
 
-	/* connection on which the request is being sent */
-	struct evhttp_connection *evcon;
+    /* connection on which the request is being sent */
+    struct evhttp_connection *evcon;
 
-	/* the actual  request */
-	struct evhttp_request *req;
+    /* the actual  request */
+    struct evhttp_request *req;
 
-	/* event for implementing request timeouts */
-	struct event ev_timeout;
+    /* event for implementing request timeouts */
+    struct event ev_timeout;
 
-	/* the name of the rpc */
-	char *name;
+    /* the name of the rpc */
+    char *name;
 
-	/* callback */
-	void (*cb)(struct evrpc_status*, void *request, void *reply, void *arg);
-	void *cb_arg;
+    /* callback */
+    void (*cb)(struct evrpc_status*, void *request, void *reply, void *arg);
+    void *cb_arg;
 
-	void *request;
-	void *reply;
+    void *request;
+    void *reply;
 
-	/* unmarshals the buffer into the proper request structure */
-	void (*request_marshal)(struct evbuffer *, void *);
+    /* unmarshals the buffer into the proper request structure */
+    void (*request_marshal)(struct evbuffer *, void *);
 
-	/* removes all stored state in the reply */
-	void (*reply_clear)(void *);
+    /* removes all stored state in the reply */
+    void (*reply_clear)(void *);
 
-	/* marshals the reply into a buffer */
-	int (*reply_unmarshal)(void *, struct evbuffer*);
+    /* marshals the reply into a buffer */
+    int (*reply_unmarshal)(void *, struct evbuffer*);
 };
 
 #endif /* _EVRPC_INTERNAL_H_ */

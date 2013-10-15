@@ -45,53 +45,53 @@
 int
 evutil_secure_rng_init(void)
 {
-	/* call arc4random() now to force it to self-initialize */
-	(void) arc4random();
-	return 0;
+    /* call arc4random() now to force it to self-initialize */
+    (void) arc4random();
+    return 0;
 }
 int
 evutil_secure_rng_global_setup_locks_(const int enable_locks)
 {
-	return 0;
+    return 0;
 }
 
 static void
 ev_arc4random_buf(void *buf, size_t n)
 {
 #if defined(_EVENT_HAVE_ARC4RANDOM_BUF) && !defined(__APPLE__)
-	return arc4random_buf(buf, n);
+    return arc4random_buf(buf, n);
 #else
-	unsigned char *b = buf;
+    unsigned char *b = buf;
 
 #if defined(_EVENT_HAVE_ARC4RANDOM_BUF)
-	/* OSX 10.7 introducd arc4random_buf, so if you build your program
-	 * there, you'll get surprised when older versions of OSX fail to run.
-	 * To solve this, we can check whether the function pointer is set,
-	 * and fall back otherwise.  (OSX does this using some linker
-	 * trickery.)
-	 */
-	if (arc4random_buf != NULL) {
-		return arc4random_buf(buf, n);
-	}
+    /* OSX 10.7 introducd arc4random_buf, so if you build your program
+     * there, you'll get surprised when older versions of OSX fail to run.
+     * To solve this, we can check whether the function pointer is set,
+     * and fall back otherwise.  (OSX does this using some linker
+     * trickery.)
+     */
+    if (arc4random_buf != NULL) {
+        return arc4random_buf(buf, n);
+    }
 #endif
-	/* Make sure that we start out with b at a 4-byte alignment; plenty
-	 * of CPUs care about this for 32-bit access. */
-	if (n >= 4 && ((ev_uintptr_t)b) & 3) {
-		ev_uint32_t u = arc4random();
-		int n_bytes = 4 - (((ev_uintptr_t)b) & 3);
-		memcpy(b, &u, n_bytes);
-		b += n_bytes;
-		n -= n_bytes;
-	}
-	while (n >= 4) {
-		*(ev_uint32_t*)b = arc4random();
-		b += 4;
-		n -= 4;
-	}
-	if (n) {
-		ev_uint32_t u = arc4random();
-		memcpy(b, &u, n);
-	}
+    /* Make sure that we start out with b at a 4-byte alignment; plenty
+     * of CPUs care about this for 32-bit access. */
+    if (n >= 4 && ((ev_uintptr_t)b) & 3) {
+        ev_uint32_t u = arc4random();
+        int n_bytes = 4 - (((ev_uintptr_t)b) & 3);
+        memcpy(b, &u, n_bytes);
+        b += n_bytes;
+        n -= n_bytes;
+    }
+    while (n >= 4) {
+        *(ev_uint32_t*)b = arc4random();
+        b += 4;
+        n -= 4;
+    }
+    if (n) {
+        ev_uint32_t u = arc4random();
+        memcpy(b, &u, n);
+    }
 #endif
 }
 
@@ -118,28 +118,28 @@ static void *arc4rand_lock;
 int
 evutil_secure_rng_global_setup_locks_(const int enable_locks)
 {
-	EVTHREAD_SETUP_GLOBAL_LOCK(arc4rand_lock, 0);
-	return 0;
+    EVTHREAD_SETUP_GLOBAL_LOCK(arc4rand_lock, 0);
+    return 0;
 }
 #endif
 
 int
 evutil_secure_rng_init(void)
 {
-	int val;
+    int val;
 
-	_ARC4_LOCK();
-	if (!arc4_seeded_ok)
-		arc4_stir();
-	val = arc4_seeded_ok ? 0 : -1;
-	_ARC4_UNLOCK();
-	return val;
+    _ARC4_LOCK();
+    if (!arc4_seeded_ok)
+        arc4_stir();
+    val = arc4_seeded_ok ? 0 : -1;
+    _ARC4_UNLOCK();
+    return val;
 }
 
 static void
 ev_arc4random_buf(void *buf, size_t n)
 {
-	arc4random_buf(buf, n);
+    arc4random_buf(buf, n);
 }
 
 #endif /* } !_EVENT_HAVE_ARC4RANDOM */
@@ -147,13 +147,13 @@ ev_arc4random_buf(void *buf, size_t n)
 void
 evutil_secure_rng_get_bytes(void *buf, size_t n)
 {
-	ev_arc4random_buf(buf, n);
+    ev_arc4random_buf(buf, n);
 }
 
 void
 evutil_secure_rng_add_bytes(const char *buf, size_t n)
 {
-	arc4random_addrandom((unsigned char*)buf,
-	    n>(size_t)INT_MAX ? INT_MAX : (int)n);
+    arc4random_addrandom((unsigned char*)buf,
+        n>(size_t)INT_MAX ? INT_MAX : (int)n);
 }
 

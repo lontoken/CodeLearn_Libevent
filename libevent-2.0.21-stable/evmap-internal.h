@@ -44,7 +44,7 @@ void evmap_signal_initmap(struct event_signal_map* ctx);
 
 /** Remove all entries from an event_map.
 
-	@param ctx the map to clear.
+    @param ctx the map to clear.
  */
 void evmap_io_clear(struct event_io_map* ctx);
 void evmap_signal_clear(struct event_signal_map* ctx);

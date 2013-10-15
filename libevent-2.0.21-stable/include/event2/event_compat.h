@@ -29,17 +29,17 @@
 
 /** @file event2/event_compat.h
 
-  Potentially non-threadsafe versions of the functions in event.h: provided
-  only for backwards compatibility.
+  Potentially可能 non-threadsafe versions of the functions in event.h: provided
+  only for backwards compatibility兼容性.
 
   In the oldest versions of Libevent, event_base was not a first-class
   structure.  Instead, there was a single event base that every function
-  manipulated.  Later, when separate event bases were added, the old functions
+  manipulated操作.  Later, when separate event bases were added, the old functions
   that didn't take an event_base argument needed to work by manipulating the
   "current" event base.  This could lead to thread-safety issues, and obscure,
   hard-to-diagnose bugs.
 
-  @deprecated All functions in this file are by definition deprecated.
+  @deprecated All functions in this file are by definition deprecated不赞成.
  */
 
 #ifdef __cplusplus

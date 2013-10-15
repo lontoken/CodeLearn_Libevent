@@ -64,147 +64,147 @@ extern "C" {
 typedef ev_uint16_t bufferevent_suspend_flags;
 
 struct bufferevent_rate_limit_group {
-	/** List of all members in the group */
-	TAILQ_HEAD(rlim_group_member_list, bufferevent_private) members;
-	/** Current limits for the group. */
-	struct ev_token_bucket rate_limit;
-	struct ev_token_bucket_cfg rate_limit_cfg;
+    /** List of all members in the group */
+    TAILQ_HEAD(rlim_group_member_list, bufferevent_private) members;
+    /** Current limits for the group. */
+    struct ev_token_bucket rate_limit;
+    struct ev_token_bucket_cfg rate_limit_cfg;
 
-	/** True iff we don't want to read from any member of the group.until
-	 * the token bucket refills.  */
-	unsigned read_suspended : 1;
-	/** True iff we don't want to write from any member of the group.until
-	 * the token bucket refills.  */
-	unsigned write_suspended : 1;
-	/** True iff we were unable to suspend one of the bufferevents in the
-	 * group for reading the last time we tried, and we should try
-	 * again. */
-	unsigned pending_unsuspend_read : 1;
-	/** True iff we were unable to suspend one of the bufferevents in the
-	 * group for writing the last time we tried, and we should try
-	 * again. */
-	unsigned pending_unsuspend_write : 1;
+    /** True iff we don't want to read from any member of the group.until
+     * the token bucket refills.  */
+    unsigned read_suspended : 1;
+    /** True iff we don't want to write from any member of the group.until
+     * the token bucket refills.  */
+    unsigned write_suspended : 1;
+    /** True iff we were unable to suspend one of the bufferevents in the
+     * group for reading the last time we tried, and we should try
+     * again. */
+    unsigned pending_unsuspend_read : 1;
+    /** True iff we were unable to suspend one of the bufferevents in the
+     * group for writing the last time we tried, and we should try
+     * again. */
+    unsigned pending_unsuspend_write : 1;
 
-	/*@{*/
-	/** Total number of bytes read or written in this group since last
-	 * reset. */
-	ev_uint64_t total_read;
-	ev_uint64_t total_written;
-	/*@}*/
+    /*@{*/
+    /** Total number of bytes read or written in this group since last
+     * reset. */
+    ev_uint64_t total_read;
+    ev_uint64_t total_written;
+    /*@}*/
 
-	/** The number of bufferevents in the group. */
-	int n_members;
+    /** The number of bufferevents in the group. */
+    int n_members;
 
-	/** The smallest number of bytes that any member of the group should
-	 * be limited to read or write at a time. */
-	ev_ssize_t min_share;
-	ev_ssize_t configured_min_share;
+    /** The smallest number of bytes that any member of the group should
+     * be limited to read or write at a time. */
+    ev_ssize_t min_share;
+    ev_ssize_t configured_min_share;
 
-	/** Timeout event that goes off once a tick, when the bucket is ready
-	 * to refill. */
-	struct event master_refill_event;
-	/** Lock to protect the members of this group.  This lock should nest
-	 * within every bufferevent lock: if you are holding this lock, do
-	 * not assume you can lock another bufferevent. */
-	void *lock;
+    /** Timeout event that goes off once a tick, when the bucket is ready
+     * to refill. */
+    struct event master_refill_event;
+    /** Lock to protect the members of this group.  This lock should nest
+     * within every bufferevent lock: if you are holding this lock, do
+     * not assume you can lock another bufferevent. */
+    void *lock;
 };
 
 /** Fields for rate-limiting a single bufferevent. */
 struct bufferevent_rate_limit {
-	/* Linked-list elements for storing this bufferevent_private in a
-	 * group.
-	 *
-	 * Note that this field is supposed to be protected by the group
-	 * lock */
-	TAILQ_ENTRY(bufferevent_private) next_in_group;
-	/** The rate-limiting group for this bufferevent, or NULL if it is
-	 * only rate-limited on its own. */
-	struct bufferevent_rate_limit_group *group;
+    /* Linked-list elements for storing this bufferevent_private in a
+     * group.
+     *
+     * Note that this field is supposed to be protected by the group
+     * lock */
+    TAILQ_ENTRY(bufferevent_private) next_in_group;
+    /** The rate-limiting group for this bufferevent, or NULL if it is
+     * only rate-limited on its own. */
+    struct bufferevent_rate_limit_group *group;
 
-	/* This bufferevent's current limits. */
-	struct ev_token_bucket limit;
-	/* Pointer to the rate-limit configuration for this bufferevent.
-	 * Can be shared.  XXX reference-count this? */
-	struct ev_token_bucket_cfg *cfg;
+    /* This bufferevent's current limits. */
+    struct ev_token_bucket limit;
+    /* Pointer to the rate-limit configuration for this bufferevent.
+     * Can be shared.  XXX reference-count this? */
+    struct ev_token_bucket_cfg *cfg;
 
-	/* Timeout event used when one this bufferevent's buckets are
-	 * empty. */
-	struct event refill_bucket_event;
+    /* Timeout event used when one this bufferevent's buckets are
+     * empty. */
+    struct event refill_bucket_event;
 };
 
 /** Parts of the bufferevent structure that are shared among all bufferevent
  * types, but not exposed in bufferevent_struct.h. */
 struct bufferevent_private {
-	/** The underlying bufferevent structure. */
-	struct bufferevent bev;
+    /** The underlying bufferevent structure. */
+    struct bufferevent bev;
 
-	/** Evbuffer callback to enforce watermarks on input. */
-	struct evbuffer_cb_entry *read_watermarks_cb;
+    /** Evbuffer callback to enforce watermarks on input. */
+    struct evbuffer_cb_entry *read_watermarks_cb;
 
-	/** If set, we should free the lock when we free the bufferevent. */
-	unsigned own_lock : 1;
+    /** If set, we should free the lock when we free the bufferevent. */
+    unsigned own_lock : 1;
 
-	/** Flag: set if we have deferred callbacks and a read callback is
-	 * pending. */
-	unsigned readcb_pending : 1;
-	/** Flag: set if we have deferred callbacks and a write callback is
-	 * pending. */
-	unsigned writecb_pending : 1;
-	/** Flag: set if we are currently busy connecting. */
-	unsigned connecting : 1;
-	/** Flag: set if a connect failed prematurely; this is a hack for
-	 * getting around the bufferevent abstraction. */
-	unsigned connection_refused : 1;
-	/** Set to the events pending if we have deferred callbacks and
-	 * an events callback is pending. */
-	short eventcb_pending;
+    /** Flag: set if we have deferred callbacks and a read callback is
+     * pending. */
+    unsigned readcb_pending : 1;
+    /** Flag: set if we have deferred callbacks and a write callback is
+     * pending. */
+    unsigned writecb_pending : 1;
+    /** Flag: set if we are currently busy connecting. */
+    unsigned connecting : 1;
+    /** Flag: set if a connect failed prematurely; this is a hack for
+     * getting around the bufferevent abstraction. */
+    unsigned connection_refused : 1;
+    /** Set to the events pending if we have deferred callbacks and
+     * an events callback is pending. */
+    short eventcb_pending;
 
-	/** If set, read is suspended until one or more conditions are over.
-	 * The actual value here is a bitfield of those conditions; see the
-	 * BEV_SUSPEND_* flags above. */
-	bufferevent_suspend_flags read_suspended;
+    /** If set, read is suspended until one or more conditions are over.
+     * The actual value here is a bitfield of those conditions; see the
+     * BEV_SUSPEND_* flags above. */
+    bufferevent_suspend_flags read_suspended;
 
-	/** If set, writing is suspended until one or more conditions are over.
-	 * The actual value here is a bitfield of those conditions; see the
-	 * BEV_SUSPEND_* flags above. */
-	bufferevent_suspend_flags write_suspended;
+    /** If set, writing is suspended until one or more conditions are over.
+     * The actual value here is a bitfield of those conditions; see the
+     * BEV_SUSPEND_* flags above. */
+    bufferevent_suspend_flags write_suspended;
 
-	/** Set to the current socket errno if we have deferred callbacks and
-	 * an events callback is pending. */
-	int errno_pending;
+    /** Set to the current socket errno if we have deferred callbacks and
+     * an events callback is pending. */
+    int errno_pending;
 
-	/** The DNS error code for bufferevent_socket_connect_hostname */
-	int dns_error;
+    /** The DNS error code for bufferevent_socket_connect_hostname */
+    int dns_error;
 
-	/** Used to implement deferred callbacks */
-	struct deferred_cb deferred;
+    /** Used to implement deferred callbacks */
+    struct deferred_cb deferred;
 
-	/** The options this bufferevent was constructed with */
-	enum bufferevent_options options;
+    /** The options this bufferevent was constructed with */
+    enum bufferevent_options options;
 
-	/** Current reference count for this bufferevent. */
-	int refcnt;
+    /** Current reference count for this bufferevent. */
+    int refcnt;
 
-	/** Lock for this bufferevent.  Shared by the inbuf and the outbuf.
-	 * If NULL, locking is disabled. */
-	void *lock;
+    /** Lock for this bufferevent.  Shared by the inbuf and the outbuf.
+     * If NULL, locking is disabled. */
+    void *lock;
 
-	/** Rate-limiting information for this bufferevent */
-	struct bufferevent_rate_limit *rate_limiting;
+    /** Rate-limiting information for this bufferevent */
+    struct bufferevent_rate_limit *rate_limiting;
 };
 
 /** Possible operations for a control callback. */
 enum bufferevent_ctrl_op {
-	BEV_CTRL_SET_FD,
-	BEV_CTRL_GET_FD,
-	BEV_CTRL_GET_UNDERLYING,
-	BEV_CTRL_CANCEL_ALL
+    BEV_CTRL_SET_FD,
+    BEV_CTRL_GET_FD,
+    BEV_CTRL_GET_UNDERLYING,
+    BEV_CTRL_CANCEL_ALL
 };
 
 /** Possible data types for a control callback */
 union bufferevent_ctrl_data {
-	void *ptr;
-	evutil_socket_t fd;
+    void *ptr;
+    evutil_socket_t fd;
 };
 
 /**
@@ -212,45 +212,45 @@ union bufferevent_ctrl_data {
    information to make the various bufferevent types work.
 */
 struct bufferevent_ops {
-	/** The name of the bufferevent's type. */
-	const char *type;
-	/** At what offset into the implementation type will we find a
-	    bufferevent structure?
+    /** The name of the bufferevent's type. */
+    const char *type;
+    /** At what offset into the implementation type will we find a
+        bufferevent structure?
 
-	    Example: if the type is implemented as
-	    struct bufferevent_x {
-	       int extra_data;
-	       struct bufferevent bev;
-	    }
-	    then mem_offset should be offsetof(struct bufferevent_x, bev)
-	*/
-	off_t mem_offset;
+        Example: if the type is implemented as
+        struct bufferevent_x {
+           int extra_data;
+           struct bufferevent bev;
+        }
+        then mem_offset should be offsetof(struct bufferevent_x, bev)
+    */
+    off_t mem_offset;
 
-	/** Enables one or more of EV_READ|EV_WRITE on a bufferevent.  Does
-	    not need to adjust the 'enabled' field.  Returns 0 on success, -1
-	    on failure.
-	 */
-	int (*enable)(struct bufferevent *, short);
+    /** Enables one or more of EV_READ|EV_WRITE on a bufferevent.  Does
+        not need to adjust the 'enabled' field.  Returns 0 on success, -1
+        on failure.
+     */
+    int (*enable)(struct bufferevent *, short);
 
-	/** Disables one or more of EV_READ|EV_WRITE on a bufferevent.  Does
-	    not need to adjust the 'enabled' field.  Returns 0 on success, -1
-	    on failure.
-	 */
-	int (*disable)(struct bufferevent *, short);
+    /** Disables one or more of EV_READ|EV_WRITE on a bufferevent.  Does
+        not need to adjust the 'enabled' field.  Returns 0 on success, -1
+        on failure.
+     */
+    int (*disable)(struct bufferevent *, short);
 
-	/** Free any storage and deallocate any extra data or structures used
-	    in this implementation.
-	 */
-	void (*destruct)(struct bufferevent *);
+    /** Free any storage and deallocate any extra data or structures used
+        in this implementation.
+     */
+    void (*destruct)(struct bufferevent *);
 
-	/** Called when the timeouts on the bufferevent have changed.*/
-	int (*adj_timeouts)(struct bufferevent *);
+    /** Called when the timeouts on the bufferevent have changed.*/
+    int (*adj_timeouts)(struct bufferevent *);
 
-	/** Called to flush data. */
-	int (*flush)(struct bufferevent *, short, enum bufferevent_flush_mode);
+    /** Called to flush data. */
+    int (*flush)(struct bufferevent *, short, enum bufferevent_flush_mode);
 
-	/** Called to access miscellaneous fields. */
-	int (*ctrl)(struct bufferevent *, enum bufferevent_ctrl_op, union bufferevent_ctrl_data *);
+    /** Called to access miscellaneous fields. */
+    int (*ctrl)(struct bufferevent *, enum bufferevent_ctrl_op, union bufferevent_ctrl_data *);
 
 };
 
@@ -287,9 +287,9 @@ void bufferevent_suspend_write(struct bufferevent *bufev, bufferevent_suspend_fl
 void bufferevent_unsuspend_write(struct bufferevent *bufev, bufferevent_suspend_flags what);
 
 #define bufferevent_wm_suspend_read(b) \
-	bufferevent_suspend_read((b), BEV_SUSPEND_WM)
+    bufferevent_suspend_read((b), BEV_SUSPEND_WM)
 #define bufferevent_wm_unsuspend_read(b) \
-	bufferevent_unsuspend_read((b), BEV_SUSPEND_WM)
+    bufferevent_unsuspend_read((b), BEV_SUSPEND_WM)
 
 /*
   Disable a bufferevent.  Equivalent to bufferevent_disable(), but
@@ -353,22 +353,22 @@ int _bufferevent_generic_adj_timeouts(struct bufferevent *bev);
 
 /** Internal use: We have just successfully read data into an inbuf, so
  * reset the read timeout (if any). */
-#define BEV_RESET_GENERIC_READ_TIMEOUT(bev)				\
-	do {								\
-		if (evutil_timerisset(&(bev)->timeout_read))		\
-			event_add(&(bev)->ev_read, &(bev)->timeout_read); \
-	} while (0)
+#define BEV_RESET_GENERIC_READ_TIMEOUT(bev)                \
+    do {                                \
+        if (evutil_timerisset(&(bev)->timeout_read))        \
+            event_add(&(bev)->ev_read, &(bev)->timeout_read); \
+    } while (0)
 /** Internal use: We have just successfully written data from an inbuf, so
  * reset the read timeout (if any). */
-#define BEV_RESET_GENERIC_WRITE_TIMEOUT(bev)				\
-	do {								\
-		if (evutil_timerisset(&(bev)->timeout_write))		\
-			event_add(&(bev)->ev_write, &(bev)->timeout_write); \
-	} while (0)
-#define BEV_DEL_GENERIC_READ_TIMEOUT(bev)	\
-		event_del(&(bev)->ev_read)
-#define BEV_DEL_GENERIC_WRITE_TIMEOUT(bev)	\
-		event_del(&(bev)->ev_write)
+#define BEV_RESET_GENERIC_WRITE_TIMEOUT(bev)                \
+    do {                                \
+        if (evutil_timerisset(&(bev)->timeout_write))        \
+            event_add(&(bev)->ev_write, &(bev)->timeout_write); \
+    } while (0)
+#define BEV_DEL_GENERIC_READ_TIMEOUT(bev)    \
+        event_del(&(bev)->ev_read)
+#define BEV_DEL_GENERIC_WRITE_TIMEOUT(bev)    \
+        event_del(&(bev)->ev_write)
 
 
 /** Internal: Given a bufferevent, return its corresponding
@@ -380,16 +380,16 @@ int _bufferevent_generic_adj_timeouts(struct bufferevent *bev);
 #define BEV_UNLOCK(b) _EVUTIL_NIL_STMT
 #else
 /** Internal: Grab the lock (if any) on a bufferevent */
-#define BEV_LOCK(b) do {						\
-		struct bufferevent_private *locking =  BEV_UPCAST(b);	\
-		EVLOCK_LOCK(locking->lock, 0);				\
-	} while (0)
+#define BEV_LOCK(b) do {                        \
+        struct bufferevent_private *locking =  BEV_UPCAST(b);    \
+        EVLOCK_LOCK(locking->lock, 0);                \
+    } while (0)
 
 /** Internal: Release the lock (if any) on a bufferevent */
-#define BEV_UNLOCK(b) do {						\
-		struct bufferevent_private *locking =  BEV_UPCAST(b);	\
-		EVLOCK_UNLOCK(locking->lock, 0);			\
-	} while (0)
+#define BEV_UNLOCK(b) do {                        \
+        struct bufferevent_private *locking =  BEV_UPCAST(b);    \
+        EVLOCK_UNLOCK(locking->lock, 0);            \
+    } while (0)
 #endif
 
 

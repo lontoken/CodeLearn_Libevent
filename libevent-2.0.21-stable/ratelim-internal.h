@@ -36,31 +36,31 @@ extern "C" {
  * currently willing to read or write on a given bufferevent or group of
  * bufferevents */
 struct ev_token_bucket {
-	/** How many bytes are we willing to read or write right now? These
-	 * values are signed so that we can do "defecit spending" */
-	ev_ssize_t read_limit, write_limit;
-	/** When was this bucket last updated?  Measured in abstract 'ticks'
-	 * relative to the token bucket configuration. */
-	ev_uint32_t last_updated;
+    /** How many bytes are we willing to read or write right now? These
+     * values are signed so that we can do "defecit spending" */
+    ev_ssize_t read_limit, write_limit;
+    /** When was this bucket last updated?  Measured in abstract 'ticks'
+     * relative to the token bucket configuration. */
+    ev_uint32_t last_updated;
 };
 
 /** Configuration info for a token bucket or set of token buckets. */
 struct ev_token_bucket_cfg {
-	/** How many bytes are we willing to read on average per tick? */
-	size_t read_rate;
-	/** How many bytes are we willing to read at most in any one tick? */
-	size_t read_maximum;
-	/** How many bytes are we willing to write on average per tick? */
-	size_t write_rate;
-	/** How many bytes are we willing to write at most in any one tick? */
-	size_t write_maximum;
+    /** How many bytes are we willing to read on average per tick? */
+    size_t read_rate;
+    /** How many bytes are we willing to read at most in any one tick? */
+    size_t read_maximum;
+    /** How many bytes are we willing to write on average per tick? */
+    size_t write_rate;
+    /** How many bytes are we willing to write at most in any one tick? */
+    size_t write_maximum;
 
-	/* How long is a tick?  Note that fractions of a millisecond are
-	 * ignored. */
-	struct timeval tick_timeout;
+    /* How long is a tick?  Note that fractions of a millisecond are
+     * ignored. */
+    struct timeval tick_timeout;
 
-	/* How long is a tick, in milliseconds?  Derived from tick_timeout. */
-	unsigned msec_per_tick;
+    /* How long is a tick, in milliseconds?  Derived from tick_timeout. */
+    unsigned msec_per_tick;
 };
 
 /** The current tick is 'current_tick': add bytes to 'bucket' as specified in
@@ -88,15 +88,15 @@ int bufferevent_remove_from_rate_limit_group_internal(struct bufferevent *bev,
     int unsuspend);
 
 /** Decrease the read limit of 'b' by 'n' bytes */
-#define ev_token_bucket_decrement_read(b,n)	\
-	do {					\
-		(b)->read_limit -= (n);		\
-	} while (0)
+#define ev_token_bucket_decrement_read(b,n)    \
+    do {                    \
+        (b)->read_limit -= (n);        \
+    } while (0)
 /** Decrease the write limit of 'b' by 'n' bytes */
-#define ev_token_bucket_decrement_write(b,n)	\
-	do {					\
-		(b)->write_limit -= (n);	\
-	} while (0)
+#define ev_token_bucket_decrement_write(b,n)    \
+    do {                    \
+        (b)->write_limit -= (n);    \
+    } while (0)
 
 #ifdef __cplusplus
 }

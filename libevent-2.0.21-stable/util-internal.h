@@ -60,7 +60,7 @@ extern "C" {
  * do the sizeof() on an int, in case "condition" is a bitfield value.
  */
 #define _EVUTIL_NIL_CONDITION(condition) do { \
-	(void)sizeof(!(condition));  \
+    (void)sizeof(!(condition));  \
 } while(0)
 
 /* Internal use only: macros to match patterns of error codes in a
@@ -74,36 +74,36 @@ extern "C" {
 #ifndef WIN32
 
 /* True iff e is an error that means a read/write operation can be retried. */
-#define EVUTIL_ERR_RW_RETRIABLE(e)				\
-	((e) == EINTR || (e) == EAGAIN)
+#define EVUTIL_ERR_RW_RETRIABLE(e)                \
+    ((e) == EINTR || (e) == EAGAIN)
 /* True iff e is an error that means an connect can be retried. */
-#define EVUTIL_ERR_CONNECT_RETRIABLE(e)			\
-	((e) == EINTR || (e) == EINPROGRESS)
+#define EVUTIL_ERR_CONNECT_RETRIABLE(e)            \
+    ((e) == EINTR || (e) == EINPROGRESS)
 /* True iff e is an error that means a accept can be retried. */
-#define EVUTIL_ERR_ACCEPT_RETRIABLE(e)			\
-	((e) == EINTR || (e) == EAGAIN || (e) == ECONNABORTED)
+#define EVUTIL_ERR_ACCEPT_RETRIABLE(e)            \
+    ((e) == EINTR || (e) == EAGAIN || (e) == ECONNABORTED)
 
 /* True iff e is an error that means the connection was refused */
-#define EVUTIL_ERR_CONNECT_REFUSED(e)					\
-	((e) == ECONNREFUSED)
+#define EVUTIL_ERR_CONNECT_REFUSED(e)                    \
+    ((e) == ECONNREFUSED)
 
 #else
 
-#define EVUTIL_ERR_RW_RETRIABLE(e)					\
-	((e) == WSAEWOULDBLOCK ||					\
-	    (e) == WSAEINTR)
+#define EVUTIL_ERR_RW_RETRIABLE(e)                    \
+    ((e) == WSAEWOULDBLOCK ||                    \
+        (e) == WSAEINTR)
 
-#define EVUTIL_ERR_CONNECT_RETRIABLE(e)					\
-	((e) == WSAEWOULDBLOCK ||					\
-	    (e) == WSAEINTR ||						\
-	    (e) == WSAEINPROGRESS ||					\
-	    (e) == WSAEINVAL)
+#define EVUTIL_ERR_CONNECT_RETRIABLE(e)                    \
+    ((e) == WSAEWOULDBLOCK ||                    \
+        (e) == WSAEINTR ||                        \
+        (e) == WSAEINPROGRESS ||                    \
+        (e) == WSAEINVAL)
 
-#define EVUTIL_ERR_ACCEPT_RETRIABLE(e)			\
-	EVUTIL_ERR_RW_RETRIABLE(e)
+#define EVUTIL_ERR_ACCEPT_RETRIABLE(e)            \
+    EVUTIL_ERR_RW_RETRIABLE(e)
 
-#define EVUTIL_ERR_CONNECT_REFUSED(e)					\
-	((e) == WSAECONNREFUSED)
+#define EVUTIL_ERR_CONNECT_REFUSED(e)                    \
+    ((e) == WSAECONNREFUSED)
 
 #endif
 
@@ -148,18 +148,18 @@ char EVUTIL_TOLOWER(char c);
     our half-baked C OO.  Example:
 
     struct subtype {
-	int x;
-	struct supertype common;
-	int y;
+    int x;
+    struct supertype common;
+    int y;
     };
     ...
     void fn(struct supertype *super) {
-	struct subtype *sub = EVUTIL_UPCAST(super, struct subtype, common);
-	...
+    struct subtype *sub = EVUTIL_UPCAST(super, struct subtype, common);
+    ...
     }
  */
-#define EVUTIL_UPCAST(ptr, type, field)				\
-	((type *)(((char*)(ptr)) - evutil_offsetof(type, field)))
+#define EVUTIL_UPCAST(ptr, type, field)                \
+    ((type *)(((char*)(ptr)) - evutil_offsetof(type, field)))
 
 /* As open(pathname, flags, mode), except that the file is always opened with
  * the close-on-exec flag set. (And the mode argument is mandatory.)
@@ -195,20 +195,20 @@ long _evutil_weakrand(void);
 #define EVUTIL_ASSERT(cond) _EVUTIL_NIL_CONDITION(cond)
 #define EVUTIL_FAILURE_CHECK(cond) 0
 #else
-#define EVUTIL_ASSERT(cond)						\
-	do {								\
-		if (EVUTIL_UNLIKELY(!(cond))) {				\
-			event_errx(_EVENT_ERR_ABORT,			\
-			    "%s:%d: Assertion %s failed in %s",		\
-			    __FILE__,__LINE__,#cond,__func__);		\
-			/* In case a user-supplied handler tries to */	\
-			/* return control to us, log and abort here. */	\
-			(void)fprintf(stderr,				\
-			    "%s:%d: Assertion %s failed in %s",		\
-			    __FILE__,__LINE__,#cond,__func__);		\
-			abort();					\
-		}							\
-	} while (0)
+#define EVUTIL_ASSERT(cond)                        \
+    do {                                \
+        if (EVUTIL_UNLIKELY(!(cond))) {                \
+            event_errx(_EVENT_ERR_ABORT,            \
+                "%s:%d: Assertion %s failed in %s",        \
+                __FILE__,__LINE__,#cond,__func__);        \
+            /* In case a user-supplied handler tries to */    \
+            /* return control to us, log and abort here. */    \
+            (void)fprintf(stderr,                \
+                "%s:%d: Assertion %s failed in %s",        \
+                __FILE__,__LINE__,#cond,__func__);        \
+            abort();                    \
+        }                            \
+    } while (0)
 #define EVUTIL_FAILURE_CHECK(cond) EVUTIL_UNLIKELY(cond)
 #endif
 
@@ -217,12 +217,12 @@ long _evutil_weakrand(void);
  * that lack it.  It is not space-efficient, but neither is sockaddr_storage.
  */
 struct sockaddr_storage {
-	union {
-		struct sockaddr ss_sa;
-		struct sockaddr_in ss_sin;
-		struct sockaddr_in6 ss_sin6;
-		char ss_padding[128];
-	} ss_union;
+    union {
+        struct sockaddr ss_sa;
+        struct sockaddr_in ss_sin;
+        struct sockaddr_in6 ss_sin6;
+        char ss_padding[128];
+    } ss_union;
 };
 #define ss_family ss_union.ss_sa.sa_family
 #endif
